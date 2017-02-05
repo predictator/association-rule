@@ -11,14 +11,7 @@ coding_style:
         indentation:
             general:
                 use_tabs: true
-build:
-    tests:
-        override:
-            -
-                command: 'phpunit --coverage-clover=coverage ./tests/'
-                coverage:
-                    file: 'coverage'
-                    format: 'clover'
+build: true
 tools:
     external_code_coverage: true
     php_mess_detector: true
