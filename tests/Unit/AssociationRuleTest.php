@@ -349,15 +349,6 @@ class AssociationRuleTest extends \PHPUnit_Framework_TestCase
 		$model = $assoc->exportModel();
 		$result = $model->getResult($product1);
 
-		var_dump($result);
-
-		/** @var AssociationRule\Result $item */
-		foreach ($result as $item) {
-			$item->getAssociationPercent();
-			$item->getId();
-			$item->getProduct();
-		}
-
 		$this->assertEquals(
 			array(
 				new AssociationRule\Result($product2, 100),

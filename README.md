@@ -46,3 +46,5 @@ foreach ($result as $item) {
 ## Test
 [![Build Status](https://travis-ci.org/predictator/association-rule.svg?branch=master)](https://travis-ci.org/predictator/association-rule)
 
+
+predictator.eu
