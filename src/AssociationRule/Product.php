@@ -3,7 +3,7 @@
 namespace Predictator\AssociationRule;
 
 
-class OrderItem implements OrderItemInterface
+class Product implements ProductInterface
 {
 	/**
 	 * @var string

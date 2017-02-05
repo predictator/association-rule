@@ -2,7 +2,7 @@
 namespace Predictator\AssociationRule;
 
 
-interface OrderItemInterface
+interface ProductInterface
 {
 	/**
 	 * @return string

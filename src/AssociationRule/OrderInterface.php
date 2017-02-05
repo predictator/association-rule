@@ -9,7 +9,7 @@ interface OrderInterface
 	public function getId() : string;
 
 	/**
-	 * @return OrderItemInterface[]
+	 * @return ProductInterface[]
 	 */
-	public function getOrderItems() : array;
+	public function getOrderProducts() : array;
 }

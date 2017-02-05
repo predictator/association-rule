@@ -11,112 +11,239 @@ class AssociationRuleTest extends \PHPUnit_Framework_TestCase
 {
 
 	/**
-	 * @param array $orders
-	 * @param array $expectedOrderIds
-	 * @param array $exceptedProductIds
+	 * @test
 	 */
-	protected function assertOrder(array $orders, array $expectedOrderIds, array $exceptedProductIds = null)
+	public function zeroProduct()
 	{
-		$assocRule = new AssociationRule();
-		foreach ($orders as $order) {
-			$assocRule->addOrder($order);
-		}
+		$assoc = new AssociationRule();
+		$product = new AssociationRule\Product(10);
+		$result = $assoc->getResult($product);
+
+		$this->assertEmpty($result);
+	}
+
+	/**
+	 * @test
+	 */
+	public function oneOrderWithoutProduct()
+	{
+		$assoc = new AssociationRule();
+		$assoc->addOrder(new AssociationRule\Order(1));
+		$product = new AssociationRule\Product(10);
+		$result = $assoc->getResult($product);
+		$this->assertEmpty($result);
+	}
+
+	/**
+	 * @test
+	 */
+	public function OrderSameProduct()
+	{
+		$assoc = new AssociationRule();
+		$order = new AssociationRule\Order(1);
+		$product = new AssociationRule\Product(10);
+		$order->addOrderItem($product);
+		$assoc->addOrder($order);
+		$result = $assoc->getResult($product);
+		$this->assertEmpty($result);
+	}
+
+	/**
+	 * @test
+	 */
+	public function DoubleOrderSameProduct()
+	{
+		$assoc = new AssociationRule();
+		$order = new AssociationRule\Order(1);
+		$product = new AssociationRule\Product(10);
+		$order->addOrderItem($product);
+		$order->addOrderItem($product);
+
+		$assoc->addOrder($order);
+		$assoc->addOrder($order);
+		$result = $assoc->getResult($product);
+		$this->assertEmpty($result);
+	}
+
+	/**
+	 * @test
+	 */
+	public function FullPercent()
+	{
+		$assoc = new AssociationRule();
+		$order1 = new AssociationRule\Order(1);
+		$order2 = new AssociationRule\Order(2);
+		$product1 = new AssociationRule\Product(10);
+		$product2 = new AssociationRule\Product(11);
+
+		$order1->addOrderItem($product1);
+		$order1->addOrderItem($product2);
+
+		$order2->addOrderItem($product1);
+
+		$assoc->addOrder($order1);
+		$assoc->addOrder($order2);
+		$result = $assoc->getResult($product2);
 
 		$this->assertEquals(
-			$expectedOrderIds,
-			$assocRule->getOrderIds()
-		);
+			array(
+				new AssociationRule\Result($product1, 100)
+			),
+			$result
 
-		if ($exceptedProductIds) {
-			$this->assertEquals(
-				$exceptedProductIds,
-				$assocRule->getProductIds()
-			);
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function HalfPercent()
+	{
+		$assoc = new AssociationRule();
+		$order1 = new AssociationRule\Order(1);
+		$order2 = new AssociationRule\Order(2);
+		$order3 = new AssociationRule\Order(3);
+
+		$product1 = new AssociationRule\Product(10);
+		$product2 = new AssociationRule\Product(11);
+		$product3 = new AssociationRule\Product(12);
+
+		$order1->addOrderItem($product1);
+		$order1->addOrderItem($product2);
+
+		$order2->addOrderItem($product1);
+
+		$order3->addOrderItem($product2);
+		$order3->addOrderItem($product3);
+
+		$assoc->addOrder($order1);
+		$assoc->addOrder($order2);
+		$assoc->addOrder($order3);
+		$result = $assoc->getResult($product1);
+
+		$this->assertEquals(
+			array(
+				new AssociationRule\Result($product2, 50)
+			),
+			$result
+
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function orderRatioDesc()
+	{
+		$assoc = new AssociationRule();
+		$order1 = new AssociationRule\Order(1);
+		$order2 = new AssociationRule\Order(2);
+		$order3 = new AssociationRule\Order(3);
+		$order4 = new AssociationRule\Order(4);
+
+		$product1 = new AssociationRule\Product(10);
+		$product2 = new AssociationRule\Product(11);
+		$product3 = new AssociationRule\Product(12);
+		$product4 = new AssociationRule\Product(13);
+
+		$order1->addOrderItem($product1);
+		$order1->addOrderItem($product2);
+		$order1->addOrderItem($product3);
+		$order1->addOrderItem($product4);
+
+		$order2->addOrderItem($product1);
+		$order2->addOrderItem($product2);
+
+		$order3->addOrderItem($product2);
+		$order3->addOrderItem($product3);
+		$order3->addOrderItem($product4);
+
+		$order4->addOrderItem($product1);
+		$order4->addOrderItem($product3);
+		$order4->addOrderItem($product2);
+
+		$assoc->addOrder($order1);
+		$assoc->addOrder($order2);
+		$assoc->addOrder($order3);
+		$assoc->addOrder($order4);
+
+		$result = $assoc->getResult($product1);
+
+		$this->assertEquals(
+			array(
+				new AssociationRule\Result($product2, 100),
+				new AssociationRule\Result($product3, 66),
+				new AssociationRule\Result($product4, 33)
+			),
+			$result
+
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function massTest()
+	{
+		$iteration = 20;
+
+		for ($x = 0; $x <= $iteration; $x++) {
+
+			$validIds = $this->validIds();
+			$this->randomMassTest($validIds);
 		}
 	}
 
 	/**
-	 * @tests
+	 * @test
+	 * @dataProvider validIds
+	 * @param $id
 	 */
-	public function addOrder_sameId()
+	public function validOrderId($id)
 	{
-		$this->assertOrder(
-			array(
-				new AssociationRule\Order(10),
-				new AssociationRule\Order(10)
-			),
-			array(10)
-		);
+		$order = new AssociationRule\Order($id);
+		$assoc = new AssociationRule();
+		$assoc->addOrder($order);
 	}
 
 	/**
-	 * @tests
+	 * @test
+	 * @dataProvider validIds
+	 * @param $id
 	 */
-	public function addOrder_sameObject()
+	public function validProductId($id)
 	{
 		$order = new AssociationRule\Order(10);
-		$this->assertOrder(
-			array(
-				$order,
-				$order
-			),
-			array(10)
-		);
+		$order->addOrderItem(new AssociationRule\Product($id));
+		$assoc = new AssociationRule();
+		$assoc->addOrder($order);
 	}
 
 	/**
-	 * @tests
-	 * @param $orderId
-	 * @dataProvider validIds
-	 */
-	public function addOrder_acceptableOrderIds($orderId)
-	{
-		$order = new AssociationRule\Order($orderId);
-		$this->assertOrder(
-			array(
-				$order
-			),
-			array($orderId)
-		);
-	}
-
-	/**
-	 * @tests
+	 * @test
+	 * @dataProvider invalidIds
+	 * @param $id
 	 * @expectedException \InvalidArgumentException
 	 */
-	public function addOrder_unacceptableOrderIds_empty()
+	public function invalidOrderId($id)
 	{
-		$order = new AssociationRule\Order('');
-		$assocRule = new AssociationRule();
-		$assocRule->addOrder($order);
+		$order = new AssociationRule\Order($id);
+		$assoc = new AssociationRule();
+		$assoc->addOrder($order);
 	}
 
 	/**
-	 * @tests
-	 * @param $orderId
+	 * @test
 	 * @dataProvider invalidIds
-	 * @expectedException \TypeError
+	 * @param $id
+	 * @expectedException \InvalidArgumentException
 	 */
-	public function addOrder_unacceptableOrderIds($orderId)
+	public function invalidProductId($id)
 	{
-		$order = new AssociationRule\Order($orderId);
-		$this->assertOrder(
-			array(
-				$order
-			),
-			array($orderId)
-		);
-	}
-
-	public function getUniqueProductIds()
-	{
-		$order = new AssociationRule\Order();
-		$this->assertOrder(
-			array(
-				$order
-			),
-			array($orderId)
-		);
+		$order = new AssociationRule\Order(10);
+		$order->addOrderItem(new AssociationRule\Product($id));
+		$assoc = new AssociationRule();
+		$assoc->addOrder($order);
 	}
 
 	/**
@@ -129,7 +256,7 @@ class AssociationRuleTest extends \PHPUnit_Framework_TestCase
 			[1],
 			[$fakerFactory->uuid],
 			[$fakerFactory->randomDigitNotNull],
-			[$fakerFactory->randomFloat()],
+			[$fakerFactory->randomFloat(null, 1, 100000000)],
 			[$fakerFactory->randomLetter],
 			[$fakerFactory->words(1, true)],
 			[$fakerFactory->words(3, true)],
@@ -144,18 +271,100 @@ class AssociationRuleTest extends \PHPUnit_Framework_TestCase
 			['áűúőóüó'],
 			['*.éáúúóˆ1˘ˇˆ˘~*>#*'],
 			['/ \ \\ "\'"[]'],
-			[0b11001],
-			[0x23A3],
+			[0b11001101],
+			[0x5C3A3],
 		);
 	}
 
+	/**
+	 * @return array
+	 */
 	public function invalidIds()
 	{
 		return array(
-			//[''],
-			[null],
-			[new \stdClass()],
+			[''],
 			[0]
+		);
+	}
+
+	/**
+	 * @param array $validIds
+	 */
+	protected function randomMassTest(array $validIds)
+	{
+		$assoc = new AssociationRule();
+		foreach ($this->validIds() as $validId) {
+			$order = new AssociationRule\Order($validId[0]);
+			$subValidIds = array_merge($validIds, $this->validIds());
+			foreach ($subValidIds as $subValidId) {
+				$product = new AssociationRule\Product($subValidId[0]);
+				$order->addOrderItem($product);
+			}
+			$assoc->addOrder($order);
+		}
+
+		foreach ($validIds as $validId) {
+			$result = $assoc->getResult(new AssociationRule\Product($validId[0]));
+			$this->assertNotEmpty($result);
+		}
+	}
+
+	/**
+	 * @test
+	 */
+	public function exportModel()
+	{
+		$assoc = new AssociationRule();
+		$order1 = new AssociationRule\Order(1);
+		$order2 = new AssociationRule\Order(2);
+		$order3 = new AssociationRule\Order(3);
+		$order4 = new AssociationRule\Order(4);
+
+		$product1 = new AssociationRule\Product(10);
+		$product2 = new AssociationRule\Product(11);
+		$product3 = new AssociationRule\Product(12);
+		$product4 = new AssociationRule\Product(13);
+
+		$order1->addOrderItem($product1);
+		$order1->addOrderItem($product2);
+		$order1->addOrderItem($product3);
+		$order1->addOrderItem($product4);
+
+		$order2->addOrderItem($product1);
+		$order2->addOrderItem($product2);
+
+		$order3->addOrderItem($product2);
+		$order3->addOrderItem($product3);
+		$order3->addOrderItem($product4);
+
+		$order4->addOrderItem($product1);
+		$order4->addOrderItem($product3);
+		$order4->addOrderItem($product2);
+
+		$assoc->addOrder($order1);
+		$assoc->addOrder($order2);
+		$assoc->addOrder($order3);
+		$assoc->addOrder($order4);
+
+		$model = $assoc->exportModel();
+		$result = $model->getResult($product1);
+
+		var_dump($result);
+
+		/** @var AssociationRule\Result $item */
+		foreach ($result as $item) {
+			$item->getAssociationPercent();
+			$item->getId();
+			$item->getProduct();
+		}
+
+		$this->assertEquals(
+			array(
+				new AssociationRule\Result($product2, 100),
+				new AssociationRule\Result($product3, 66),
+				new AssociationRule\Result($product4, 33)
+			),
+			$result
 		);
 	}
 

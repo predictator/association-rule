@@ -11,7 +11,7 @@ class Order implements OrderInterface
 	private $id;
 
 	/**
-	 * @var OrderItemInterface[]
+	 * @var ProductInterface[]
 	 */
 	private $orderItems = array();
 
@@ -24,9 +24,9 @@ class Order implements OrderInterface
 	}
 
 	/**
-	 * @param OrderItemInterface $orderItem
+	 * @param ProductInterface $orderItem
 	 */
-	public function addOrderItem(OrderItemInterface $orderItem)
+	public function addOrderItem(ProductInterface $orderItem)
 	{
 		$this->orderItems[] = $orderItem;
 	}
@@ -40,9 +40,9 @@ class Order implements OrderInterface
 	}
 
 	/**
-	 * @return OrderItemInterface[]
+	 * @return ProductInterface[]
 	 */
-	public function getOrderItems(): array
+	public function getOrderProducts(): array
 	{
 		return $this->orderItems;
 	}
