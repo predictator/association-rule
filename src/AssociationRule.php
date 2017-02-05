@@ -81,7 +81,7 @@ class AssociationRule implements AssociationModelInterface
 			$orderProducts = $this->getProductIds($orderId);
 			foreach ($orderProducts as $similarOrderProduct) {
 				if (
-					!in_array($similarOrderProduct, $ordersProducts) and
+					!in_array($similarOrderProduct, $ordersProducts) &&
 					$productId != $similarOrderProduct
 				) {
 					$ordersProducts[] = $similarOrderProduct;
