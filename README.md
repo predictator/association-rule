@@ -45,6 +45,7 @@ foreach ($result as $item) {
 ```
 ## Test
 [![Build Status](https://travis-ci.org/predictator/association-rule.svg?branch=master)](https://travis-ci.org/predictator/association-rule)
-
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/predictator/association-rule/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/predictator/association-rule/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/predictator/association-rule/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/predictator/association-rule/?branch=master)
 
 predictator.eu

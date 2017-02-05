@@ -76,18 +76,7 @@ class AssociationRule implements AssociationModelInterface
 		$orderIds = $this->getOrderIds($productId);
 		$orderIdsCount = count($orderIds);
 
-		$ordersProducts = [];
-		foreach ($orderIds as $orderId) {
-			$orderProducts = $this->getProductIds($orderId);
-			foreach ($orderProducts as $similarOrderProduct) {
-				if (
-					!in_array($similarOrderProduct, $ordersProducts) &&
-					$productId != $similarOrderProduct
-				) {
-					$ordersProducts[] = $similarOrderProduct;
-				}
-			}
-		}
+		$ordersProducts = $this->getOrderProducts($orderIds, $productId);
 
 		$associatedProducts = array();
 		foreach ($ordersProducts as $orderProductId) {
@@ -135,5 +124,27 @@ class AssociationRule implements AssociationModelInterface
 		}
 
 		return $associationModel;
+	}
+
+	/**
+	 * @param array $orderIds
+	 * @param string $productId
+	 * @return array
+	 */
+	private function getOrderProducts(array $orderIds, string $productId): array
+	{
+		$ordersProducts = [];
+		foreach ($orderIds as $orderId) {
+			$orderProducts = $this->getProductIds($orderId);
+			foreach ($orderProducts as $similarOrderProduct) {
+				if (
+					!in_array($similarOrderProduct, $ordersProducts) &&
+					$productId != $similarOrderProduct
+				) {
+					$ordersProducts[] = $similarOrderProduct;
+				}
+			}
+		}
+		return $ordersProducts;
 	}
 }
