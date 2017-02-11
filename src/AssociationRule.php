@@ -118,7 +118,7 @@ class AssociationRule implements AssociationModelInterface
 	 */
 	public function exportModel() : AssociationModelInterface
 	{
-		$associationModel = new AssociationModel();
+		$associationModel = $this->getAssociationModel();
 		foreach ($this->products as $product) {
 			$associationModel->addResult($product, $this->getResult($product));
 		}
@@ -146,5 +146,13 @@ class AssociationRule implements AssociationModelInterface
 			}
 		}
 		return $ordersProducts;
+	}
+
+	/**
+	 * @return AssociationModel
+	 */
+	protected function getAssociationModel(): AssociationModel
+	{
+		return new AssociationModel();
 	}
 }
