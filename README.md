@@ -1,4 +1,4 @@
-# Association rule
+# Association rule  
 
 ## Usage
 
@@ -27,9 +27,13 @@ $result = $assoc->getResult(new AssociationRule\Product(10));
 
 ```
 
-### Export model
+### Exporting model
+You can export model for efficient serving. 
+Model consume less memory, and serve response faster.  
+ 
+
 ```php
-$model = $assoc->exportModel();
+$model = $assoc->exportModel(new AssociationRule\AssociationModel());
 $result = $model->getResult(new AssociationRule\Product(10));
 
 ```
@@ -47,5 +51,6 @@ foreach ($result as $item) {
 [![Build Status](https://travis-ci.org/predictator/association-rule.svg?branch=master)](https://travis-ci.org/predictator/association-rule)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/predictator/association-rule/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/predictator/association-rule/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/predictator/association-rule/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/predictator/association-rule/?branch=master)
+
 
 predictator.eu

@@ -346,7 +346,7 @@ class AssociationRuleTest extends \PHPUnit_Framework_TestCase
 		$assoc->addOrder($order3);
 		$assoc->addOrder($order4);
 
-		$model = $assoc->exportModel();
+		$model = $assoc->exportModel(new AssociationRule\AssociationModel());
 		$result = $model->getResult($product1);
 
 		$this->assertEquals(

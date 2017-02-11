@@ -8,7 +8,7 @@ use Predictator\AssociationRule\OrderInterface;
 use Predictator\AssociationRule\ProductInterface;
 use Predictator\AssociationRule\Result;
 
-class AssociationRule implements AssociationModelInterface
+class AssociationRule
 {
 	/**
 	 * @var array
@@ -114,11 +114,11 @@ class AssociationRule implements AssociationModelInterface
 	}
 
 	/**
+	 * @param AssociationModel $associationModel
 	 * @return AssociationModelInterface
 	 */
-	public function exportModel() : AssociationModelInterface
+	public function exportModel(AssociationModel $associationModel) : AssociationModelInterface
 	{
-		$associationModel = $this->getAssociationModel();
 		foreach ($this->products as $product) {
 			$associationModel->addResult($product, $this->getResult($product));
 		}
@@ -146,13 +146,5 @@ class AssociationRule implements AssociationModelInterface
 			}
 		}
 		return $ordersProducts;
-	}
-
-	/**
-	 * @return AssociationModel
-	 */
-	protected function getAssociationModel(): AssociationModel
-	{
-		return new AssociationModel();
 	}
 }
