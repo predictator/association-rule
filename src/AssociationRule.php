@@ -7,6 +7,7 @@ use Predictator\AssociationRule\AssociationModelInterface;
 use Predictator\AssociationRule\OrderInterface;
 use Predictator\AssociationRule\ProductInterface;
 use Predictator\AssociationRule\Result;
+use Predictator\AssociationRule\ResultSet;
 
 class AssociationRule
 {
@@ -68,9 +69,9 @@ class AssociationRule
 
 	/**
 	 * @param ProductInterface $product
-	 * @return array|Result[]
+	 * @return ResultSet
 	 */
-	public function getResult(ProductInterface $product) : array
+	public function getResult(ProductInterface $product) : ResultSet
 	{
 		$productId = $product->getId();
 		$orderIds = $this->getOrderIds($productId);
@@ -88,11 +89,11 @@ class AssociationRule
 
 		arsort($associatedProducts);
 
-		$result = [];
+		$resultSet = new ResultSet();
 		foreach ($associatedProducts as $productId => $ratio) {
-			$result[] = new Result($this->products[$productId], $ratio);
+			$resultSet->addResult(new Result($this->products[$productId], $ratio));
 		}
-		return $result;
+		return $resultSet;
 	}
 
 	/**

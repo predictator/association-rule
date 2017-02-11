@@ -8,14 +8,14 @@ interface AssociationModelInterface
 
 	/**
 	 * @param ProductInterface $product
-	 * @param array $result
+	 * @param ResultSet $result
 	 * @return void
 	 */
-	public function addResult(ProductInterface $product, array $result);
+	public function addResult(ProductInterface $product, ResultSet $result);
 
 	/**
 	 * @param ProductInterface $product
-	 * @return array|Result[]
+	 * @return ResultSet
 	 */
-	public function getResult(ProductInterface $product) : array;
+	public function getResult(ProductInterface $product) : ResultSet;
 }

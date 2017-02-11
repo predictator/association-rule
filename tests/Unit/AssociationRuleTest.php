@@ -85,13 +85,10 @@ class AssociationRuleTest extends \PHPUnit_Framework_TestCase
 		$assoc->addOrder($order2);
 		$result = $assoc->getResult($product2);
 
-		$this->assertEquals(
-			array(
-				new AssociationRule\Result($product1, 100)
-			),
-			$result
+		$resultSet = new AssociationRule\ResultSet();
+		$resultSet->addResult(new AssociationRule\Result($product1, 100));
 
-		);
+		$this->assertEquals($resultSet, $result);
 	}
 
 	/**
@@ -121,13 +118,10 @@ class AssociationRuleTest extends \PHPUnit_Framework_TestCase
 		$assoc->addOrder($order3);
 		$result = $assoc->getResult($product1);
 
-		$this->assertEquals(
-			array(
-				new AssociationRule\Result($product2, 50)
-			),
-			$result
+		$resultSet = new AssociationRule\ResultSet();
+		$resultSet->addResult(new AssociationRule\Result($product2, 50));
 
-		);
+		$this->assertEquals($resultSet, $result);
 	}
 
 	/**
@@ -169,15 +163,11 @@ class AssociationRuleTest extends \PHPUnit_Framework_TestCase
 
 		$result = $assoc->getResult($product1);
 
-		$this->assertEquals(
-			array(
-				new AssociationRule\Result($product2, 100),
-				new AssociationRule\Result($product3, 66),
-				new AssociationRule\Result($product4, 33)
-			),
-			$result
-
-		);
+		$resultSet = new AssociationRule\ResultSet();
+		$resultSet->addResult(new AssociationRule\Result($product2, 100));
+		$resultSet->addResult(new AssociationRule\Result($product3, 66));
+		$resultSet->addResult(new AssociationRule\Result($product4, 33));
+		$this->assertEquals($resultSet, $result);
 	}
 
 	/**
@@ -349,14 +339,45 @@ class AssociationRuleTest extends \PHPUnit_Framework_TestCase
 		$model = $assoc->exportModel(new AssociationRule\AssociationModel());
 		$result = $model->getResult($product1);
 
-		$this->assertEquals(
-			array(
-				new AssociationRule\Result($product2, 100),
-				new AssociationRule\Result($product3, 66),
-				new AssociationRule\Result($product4, 33)
-			),
-			$result
-		);
+		$resultSet = new AssociationRule\ResultSet();
+		$resultSet->addResult(new AssociationRule\Result($product2, 100));
+		$resultSet->addResult(new AssociationRule\Result($product3, 66));
+		$resultSet->addResult(new AssociationRule\Result($product4, 33));
+
+		$this->assertEquals($resultSet, $result);
 	}
+
+
+	/**
+	 * @test
+	 */
+	public function ResultSetArrayAccess()
+	{
+		$assoc = new AssociationRule();
+		$order1 = new AssociationRule\Order(1);
+		$order2 = new AssociationRule\Order(2);
+		$product1 = new AssociationRule\Product(10);
+		$product2 = new AssociationRule\Product(11);
+
+		$order1->addOrderItem($product1);
+		$order1->addOrderItem($product2);
+
+		$order2->addOrderItem($product1);
+
+		$assoc->addOrder($order1);
+		$assoc->addOrder($order2);
+		$result = $assoc->getResult($product2);
+
+		$this->assertInstanceOf(AssociationRule\Result::class, $result[0]);
+		$count = 0;
+
+		foreach ($result as $item) {
+			$this->assertInstanceOf(AssociationRule\Result::class, $item);
+			$count++;
+		}
+
+		$this->assertCount($count, $result);
+	}
+
 
 }
